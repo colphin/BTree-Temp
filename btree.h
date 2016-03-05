@@ -33,6 +33,8 @@ public:
     // child array C[].  The Child y must be full when this function is called
     void splitNode(int i, BTreeNode *y);
 
+    void splitLeaf(int i, vector<vector<int>> *y);
+
     // A function to traverse all nodes in a subtree rooted with this node
     void traverse();
 

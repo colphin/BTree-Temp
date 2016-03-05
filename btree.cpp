@@ -42,7 +42,7 @@ void BTree::insert(int k){
 	}
 
 	// for the 2nd insert
-	if (root->keys[0] == EMPTY_KEY){
+	else if (root->keys[0] == EMPTY_KEY){
 		// if there is already something there compare it with the thing in there and see which to put as key
 		// the case that the first insert is bigger than 2nd insert
 		cout << "2nd insert "<< endl;
@@ -59,7 +59,7 @@ void BTree::insert(int k){
 	}
 
 	//if the root is full
-	if (root->n == NUM_ARR){
+	else if (root->n == NUM_ARR){
 		//create the new root called s
 		BTreeNode * s = new BTreeNode(false);
 		//let the first C pointer point of root
@@ -94,11 +94,9 @@ void BTree::insert(int k){
 //	 		has to find where it belongs (will be done in insert non full)
 //			if the child to insert is full has to split it and figure out which one k belongs too
 void BTreeNode::insertNonFull(int k){
-	// if the current node you are on is not a leaf, then traverse down till you find the right place
-
-	if (leaf == true){
-		int i = n;
-		
+	// if the current node you are on is not a leaf, then traverse down till you find the right place	
+	if (leaf == false){
+		int downChildIndex
 	}
 
 }
@@ -137,6 +135,11 @@ void BTreeNode::splitNode(int i, BTreeNode *y){
 	//delete y
 	free(y);
 }
+
+void BTreeNode::splitLeaf(int i, vector<vector<int>> *y){
+
+}
+
 
 
 void BTree::printTree(BTreeNode *root){
