@@ -76,6 +76,7 @@ void BTree::insert(int k){
 	}
 
 	else{
+		root->leaf = false;
 		root->insertNonFull(k);
 	}
 
@@ -103,7 +104,7 @@ void BTreeNode::insertNonFull(int k){
 			downChildIndex++;
 		}
 
-		cout << "DCI" <<downChildIndex << endl;
+		cout << "DCI: " <<downChildIndex << endl;
 
 		// At this point it calls insertNonFull at the new node
 		// C[downChildIndex]->insertNonFull(k);
