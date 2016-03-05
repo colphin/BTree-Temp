@@ -12,6 +12,7 @@ using namespace std;
 #define EMPTY_DATA -100
 #define EMPTY_KEY -200
 
+
 // A BTree node
 class BTreeNode
 {
@@ -22,6 +23,11 @@ class BTreeNode
     int n;     // Current number of keys
     bool leaf; // Is true when node is leaf. Otherwise false
 public:
+    //This is for the sort method
+    struct myclass {
+        bool operator() (int i,int j) { return (i<j);}
+    } myobject;
+
     BTreeNode(bool _leaf);   // Constructor
 
     // A utility function to insert a new key in the subtree rooted with

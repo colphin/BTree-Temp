@@ -16,7 +16,7 @@ BTreeNode::BTreeNode(bool leaf1){
 		C[i] = NULL;
 	}
 
-	dataVec.resize(NUM_ARR); //size of dataVec[i] initialized to zero
+	dataVec.resize(NUM_ARR+1); //size of dataVec[i] initialized to zero
 	for( int i = 0; i < NUM_ARR+1 ; i++){
 		dataVec[i].resize(MAX_DATA , EMPTY_DATA);
 	}
@@ -76,7 +76,6 @@ void BTree::insert(int k){
 	}
 
 	else{
-		root->leaf = false;
 		root->insertNonFull(k);
 	}
 
@@ -125,8 +124,17 @@ void BTreeNode::insertNonFull(int k){
 			}
 		}
 
-		cout << "isleaffull: "<< isLeafFull << endl;
-
+		// if the leaf is full then split it and insert it into correct leaf
+		if (isLeafFull == true){
+			splitLeaf(leafPostion, &dataVec);
+			//TODO: decide which leaf is the correct one and add into there
+		}
+		// the leaf is not full and that means you get to just put it in
+		else{
+			dataVec[leafPostion].push_back(k);
+			sort(dataVec[leafPostion].begin(), dataVec[leafPostion].end(), myobject);
+			dataVec[leafPostion].erase(dataVec[leafPostion].begin());
+		}
 
 	}
 
@@ -183,8 +191,22 @@ void BTree::printTree(BTreeNode *root){
 	if (root == NULL) return;
 
 	for (int i = 0 ; i < root->n; i++){
-		cout<<"(KEY "<<i << "=" << root->keys[i] << ") ";
+		if (root->leaf){
+			for (int j = 0; j < MAX_DATA; j++){
+				if (root->dataVec[i][j] != EMPTY_DATA)
+					cout << "\t" << root->dataVec[i][j] << endl;
+			}		
+		}
+		cout<<"(KEY "<<i << "=" << root->keys[i] << ") " << endl;
 	}
+
+	if (root -> leaf){
+		for (int j = 0; j < MAX_DATA; j++){
+			if (root->dataVec[root->n][j] != EMPTY_DATA)
+				cout << "\t" << root->dataVec[root->n][j] << endl;
+		}
+	}
+
 	cout << endl;
 
 	for (int i = 0; i< root->n + 1; i++){
