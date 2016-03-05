@@ -9,8 +9,8 @@ int main(){
 	BTree *t = new BTree();
 
 	t->insert(1);
-	t->insert(2);
 	t->insert(3);
+	t->insert(4);
 
 	t->printTree(t->getRoot());
 

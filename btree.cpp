@@ -96,7 +96,37 @@ void BTree::insert(int k){
 void BTreeNode::insertNonFull(int k){
 	// if the current node you are on is not a leaf, then traverse down till you find the right place	
 	if (leaf == false){
-		int downChildIndex
+
+		// goes to the correct pointer 
+		int downChildIndex = 0;
+		while (keys[downChildIndex] < k and downChildIndex < n){
+			downChildIndex++;
+		}
+
+		cout << "DCI" <<downChildIndex << endl;
+
+		// At this point it calls insertNonFull at the new node
+		// C[downChildIndex]->insertNonFull(k);
+	}
+	// The current node is a leaf
+	else{
+		// This finds where which the data vector should k go into
+		int leafPostion = 0;
+		while (keys[leafPostion] < k and leafPostion < n){
+			leafPostion++;
+		}
+
+		bool isLeafFull = true;
+		for( int i = 0; i < NUM_ARR+1 ; i++){
+			if (dataVec[leafPostion][i] == EMPTY_DATA){
+				isLeafFull = false;
+				break;
+			}
+		}
+
+		cout << "isleaffull: "<< isLeafFull << endl;
+
+
 	}
 
 }
@@ -111,13 +141,13 @@ void BTreeNode::splitNode(int i, BTreeNode *y){
 	//move the needed keys to Right and Left
 	for (int i = 0; i<(int)(NUM_ARR/2); i++){
 		leftChild.keys[i] = y->keys[i];
-		rightChild.keys[i+(int)NUM_ARR/2] = y->keys[(int)NUM_ARR/2];
+		rightChild.keys[i] = y->keys[i+(int)NUM_ARR/2 + 1];
 	}
 
 	//move the pointers to Right and Left
 	for (int i = 0; i<(int)((NUM_ARR+1)/2);i++){
 		leftChild.C[i] = y->C[i];
-		rightChild.C[i+(NUM_ARR+1)/2] = y->C[i+(NUM_ARR+1)/2];
+		rightChild.C[i] = y->C[i+(NUM_ARR+1)/2 + 1];
 	}	
 
 	//move middle element to parent and scoot all over
@@ -128,8 +158,13 @@ void BTreeNode::splitNode(int i, BTreeNode *y){
 		j--;
 	}
 
+	//set the middle element in the correct place, set pointers i and i+1 to left and right
+	keys[i] = y->keys[(int)NUM_ARR/2];
+	C[i] = &leftChild;
+	C[i+1] = &rightChild;
+
 	//update counts
-	leftChild.n = rightChild.n = 2;
+	leftChild.n = rightChild.n = NUM_ARR/2;
 	n = n+1;
 
 	//delete y
