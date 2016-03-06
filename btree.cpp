@@ -26,6 +26,26 @@ BTreeNode::BTreeNode(bool leaf1){
 }
 
 
+bool BTree::checkInsertion(BTreeNode *root, int k){
+	if (root->leaf){
+		int leafPostion = 0;
+		while (root->keys[leafPostion] < k and leafPostion < root->n){
+			leafPostion++;
+		}
+		if (root->dataVec[leafPostion][0] == EMPTY_DATA) return true;
+		else return false;
+	}
+	else{
+		int downChildIndex = 0;
+		while (root->keys[downChildIndex] < k and downChildIndex < root->n){
+			downChildIndex++;
+		}
+
+		return checkInsertion(root->C[downChildIndex], k);
+	}
+}
+
+
 //General Insert - has to decide which case to use
 // if the root is empty then create node and then insert it in
 // if the root isn't full then go down to where you want to insert and call insert non full
@@ -59,10 +79,12 @@ void BTree::insert(int k){
 	}
 
 
+
 	//WRONG
 
 	//if the root is full
-	else if (root->n == NUM_ARR){
+
+	else if (root->n == NUM_ARR and !checkInsertion(root, k)){
 		//create the new root called s
 		BTreeNode * s = new BTreeNode(false);
 		//let the first C pointer point of root
@@ -79,6 +101,7 @@ void BTree::insert(int k){
 	}
 
 	else{
+		// cout << checkInsertion(root, k) and root->n == NUM_ARR;
 		root->insertNonFull(k);
 	}
 
@@ -109,7 +132,7 @@ void BTreeNode::insertNonFull(int k){
 		cout << "DCI: " <<downChildIndex << endl;
 
 		// At this point it calls insertNonFull at the new node
-		// C[downChildIndex]->insertNonFull(k);
+		C[downChildIndex]->insertNonFull(k);
 	}
 	// The current node is a leaf
 	else{
@@ -191,13 +214,13 @@ void BTreeNode::splitLeaf(int i, int k){
     vector<int> split_lo(dataVec[i].begin(), dataVec[i].begin() + half_size);
     vector<int> split_hi(dataVec[i].begin() + half_size, dataVec[i].end());
     dataVec[i]=split_lo;
-    dataVec[i].push_back(EMPTY_DATA);
+	dataVec[i].insert(dataVec[i].begin(),EMPTY_DATA);
     //loop for vectors leave space open on i+1 index
     for(int x = 3; x > i ; x--){
         dataVec[x+1]= dataVec[x];
     }
     dataVec[i+1]=split_hi;
-    dataVec[i+1].push_back(EMPTY_DATA);
+    dataVec[i+1].insert(dataVec[i+1].begin(),EMPTY_DATA);
     //loop through keys
     for(int x = 2; x >= i ; x--){
         keys[x+1]=keys[x];

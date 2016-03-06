@@ -76,7 +76,9 @@ public:
     //mainly to debug right now but hey fuck it right?
     void printTree(BTreeNode *root);
 
-    BTreeNode* getRoot(){ return root; }
+    BTreeNode* getRoot(){ return root; };
+
+    bool checkInsertion(BTreeNode *root, int k);
 };
 
 #endif
