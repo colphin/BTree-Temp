@@ -37,7 +37,6 @@ void BTree::insert(int k){
 	if (root == NULL){
 		root = new BTreeNode(true);
 		//if its the first element, no key just insert it into the first empty data slot
-		cout << "first insert" << endl;
 		root->dataVec[0][0] = k;
 	}
 
@@ -45,31 +44,22 @@ void BTree::insert(int k){
 	else if (root->keys[0] == EMPTY_KEY){
 		// if there is already something there compare it with the thing in there and see which to put as key
 		// the case that the first insert is bigger than 2nd insert
-		cout << "2nd insert "<< endl;
-		if (root->dataVec[0][0] > k){
-			root->dataVec[1][0] = root->dataVec[0][0];
-			root->dataVec[0][0] = k;
-			root->keys[0] = root->dataVec[1][0];
-		}else{ // the case where the first insert is smaller than the 2nd insert
-			root->dataVec[1][0] = k;
-			root->keys[0] = k;
+
+		for (int i = 0; i <= MAX_DATA; i++){			
+			if(i == MAX_DATA){
+				root->splitLeaf(0,k);
+			}
+			else if (root->dataVec[0][i] == EMPTY_DATA){
+				root->dataVec[0][i] = k;
+				break;
+			}
 		}
-		//update the number of keys
-		root->n = root->n+1;
-
-
-		// for (int i = 0; i < MAX_DATA; i++){			
-		// 	if(i == MAX_DATA){
-		// 		root->splitLeaf(0,k);
-		// 	}
-		// 	else if (root->dataVec[0][i] == EMPTY_DATA){
-		// 		root->dataVec[0][i] = k;
-		// 		break;
-		// 	}
-		// }
 
 
 	}
+
+
+	//WRONG
 
 	//if the root is full
 	else if (root->n == NUM_ARR){
@@ -130,7 +120,7 @@ void BTreeNode::insertNonFull(int k){
 		}
 
 		bool isLeafFull = true;
-		for( int i = 0; i < NUM_ARR+1 ; i++){
+		for( int i = 0; i < MAX_DATA ; i++){
 			if (dataVec[leafPostion][i] == EMPTY_DATA){
 				isLeafFull = false;
 				break;
@@ -197,6 +187,16 @@ void BTreeNode::splitLeaf(int i, int k){
 
 	//creat low and high with half of the dataVec containing k
 	dataVec[i].push_back(k);
+    sort(dataVec[i].begin(), dataVec[i].end(), myobject);
+
+    cout << "NODE TO SPLIT__" << endl;
+    for (int j = 0; j<dataVec[i].size();j++){
+    	cout << dataVec[i][j] << " ";
+    }
+
+    cout << endl;
+
+
 	int half_size = dataVec[i].size() / 2;
     vector<int> split_lo(dataVec[i].begin(), dataVec[i].begin() + half_size);
     vector<int> split_hi(dataVec[i].begin() + half_size, dataVec[i].end());
@@ -224,11 +224,11 @@ void BTreeNode::splitLeaf(int i, int k){
     	cout << split_hi[i] << endl;
     } 
     //moving keys over 
-    for(int j = n-1; j>i; j--){
+    for(int j = n; j>i; j--){
     	keys[j] = keys[j-1];
     }
     //moving vectors over
-    for(int j = n; j>i; j--){
+    for(int j = n+1; j>i; j--){
     	dataVec[j] = dataVec[j-1];
     }
 
@@ -239,6 +239,8 @@ void BTreeNode::splitLeaf(int i, int k){
     		break;
     	}
     }
+
+    // cout << "TEMPKEY:" << tempKey << endl;
 
     keys[i] = tempKey;
     n= n+1;
