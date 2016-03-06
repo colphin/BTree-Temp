@@ -56,6 +56,19 @@ void BTree::insert(int k){
 		}
 		//update the number of keys
 		root->n = root->n+1;
+
+
+		// for (int i = 0; i < MAX_DATA; i++){			
+		// 	if(i == MAX_DATA){
+		// 		root->splitLeaf(0,k);
+		// 	}
+		// 	else if (root->dataVec[0][i] == EMPTY_DATA){
+		// 		root->dataVec[0][i] = k;
+		// 		break;
+		// 	}
+		// }
+
+
 	}
 
 	//if the root is full
@@ -181,25 +194,62 @@ void BTreeNode::splitNode(int i, BTreeNode *y){
 }
 
 void BTreeNode::splitLeaf(int i, int k){
-	cout<<"this is i "<<i<<endl;
+
+	//creat low and high with half of the dataVec containing k
 	dataVec[i].push_back(k);
 	int half_size = dataVec[i].size() / 2;
     vector<int> split_lo(dataVec[i].begin(), dataVec[i].begin() + half_size);
     vector<int> split_hi(dataVec[i].begin() + half_size, dataVec[i].end());
-    dataVec[i]=split_lo;
-    dataVec[i].push_back(EMPTY_DATA);
-    //loop for vectors leave space open on i+1 index
-    for(int x = 3; x > i ; x--){
-        dataVec[x+1]= dataVec[x];
+
+    //fill in the empty slots with empty_data till it is as max data
+    while (split_lo.size() != MAX_DATA){
+    	split_lo.push_back(EMPTY_DATA);
     }
-    dataVec[i+1]=split_hi;
-    dataVec[i+1].push_back(EMPTY_DATA);
-    //loop through keys
-    for(int x = 2; x >= i ; x--){
-        keys[x+1]=keys[x];
+
+    while(split_hi.size() != MAX_DATA){
+    	split_hi.push_back(EMPTY_DATA);
     }
-    keys[i] = split_hi[0];
-    n++;  // Update number of keys in root
+
+    //sort
+    sort(split_lo.begin(), split_lo.end(), myobject);
+    sort(split_hi.begin(), split_hi.end(), myobject);
+
+    cout << "__SPLIT_LO__" << endl;
+    for(int i = 0; i < MAX_DATA; i++){
+    	cout << split_lo[i] << endl;
+    }
+
+    cout << "__SPLIT_HI__" << endl;
+    for(int i = 0; i < MAX_DATA; i++){
+    	cout << split_hi[i] << endl;
+    } 
+    //moving keys over 
+    for(int j = n-1; j>i; j--){
+    	keys[j] = keys[j-1];
+    }
+    //moving vectors over
+    for(int j = n; j>i; j--){
+    	dataVec[j] = dataVec[j-1];
+    }
+
+    int tempKey = 0;
+    for (int i = 0; i < MAX_DATA; i++){
+    	if (split_hi[i] != EMPTY_DATA){
+    		tempKey = split_hi[i];
+    		break;
+    	}
+    }
+
+    keys[i] = tempKey;
+    n= n+1;
+
+    dataVec[i] = split_lo;
+    dataVec[i+1] = split_hi;
+
+
+    //
+
+
 }
 
 
