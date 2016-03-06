@@ -6,7 +6,7 @@
 #include <algorithm>    // std::sort
 using namespace std;
 
-#define NUM_ARR 5
+#define NUM_ARR 4
 #define MAX_DATA 3
 #define INITIAL_INSERT 3
 #define EMPTY_DATA -100
@@ -39,7 +39,7 @@ public:
     // child array C[].  The Child y must be full when this function is called
     void splitNode(int i, BTreeNode *y);
 
-    void splitLeaf(int i, vector<vector<int>> *y);
+    void splitLeaf(int i, int k);
 
     // A function to traverse all nodes in a subtree rooted with this node
     void traverse();

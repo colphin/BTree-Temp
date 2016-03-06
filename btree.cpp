@@ -126,7 +126,7 @@ void BTreeNode::insertNonFull(int k){
 
 		// if the leaf is full then split it and insert it into correct leaf
 		if (isLeafFull == true){
-			splitLeaf(leafPostion, &dataVec);
+			splitLeaf(leafPostion,k);
 			//TODO: decide which leaf is the correct one and add into there
 		}
 		// the leaf is not full and that means you get to just put it in
@@ -180,8 +180,26 @@ void BTreeNode::splitNode(int i, BTreeNode *y){
 	free(y);
 }
 
-void BTreeNode::splitLeaf(int i, vector<vector<int>> *y){
-
+void BTreeNode::splitLeaf(int i, int k){
+	cout<<"this is i "<<i<<endl;
+	dataVec[i].push_back(k);
+	int half_size = dataVec[i].size() / 2;
+    vector<int> split_lo(dataVec[i].begin(), dataVec[i].begin() + half_size);
+    vector<int> split_hi(dataVec[i].begin() + half_size, dataVec[i].end());
+    dataVec[i]=split_lo;
+    dataVec[i].push_back(EMPTY_DATA);
+    //loop for vectors leave space open on i+1 index
+    for(int x = 3; x > i ; x--){
+        dataVec[x+1]= dataVec[x];
+    }
+    dataVec[i+1]=split_hi;
+    dataVec[i+1].push_back(EMPTY_DATA);
+    //loop through keys
+    for(int x = 2; x >= i ; x--){
+        keys[x+1]=keys[x];
+    }
+    keys[i] = split_hi[0];
+    n++;  // Update number of keys in root
 }
 
 
