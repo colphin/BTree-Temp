@@ -178,18 +178,29 @@ void BTreeNode::splitNode(int i, BTreeNode *y){
 	BTreeNode* rightChild = new BTreeNode(y->leaf);
 
 	//move the needed keys to Right and Left
+
 	for (int i = 0; i<(int)(NUM_ARR/2); i++){
 		leftChild->keys[i] = y->keys[i];
-		rightChild->keys[i] = y->keys[i+(int)NUM_ARR/2 + 1];
+		rightChild->keys[i] = y->keys[i+(int)NUM_ARR/2];
 	}
 
 	//move the pointers to Right and Left
 	for (int i = 0; i<(int)((NUM_ARR+1)/2);i++){
 		leftChild->C[i] = y->C[i];
-		rightChild->C[i] = y->C[i+(NUM_ARR+1)/2 + 1];
-	}	
+		rightChild->C[i] = y->C[i+(NUM_ARR+1)/2];
+	}
+
+	if(y->leaf){
+		for (int i = 0; i<(int)((NUM_ARR)/2)+1;i++){
+			leftChild->dataVec[i] = y->dataVec[i];
+		}
+		for (int i = 0; i<(int)((NUM_ARR)/2);i++){
+			rightChild->dataVec[i] = y->dataVec[i+(int)NUM_ARR/2+1];
+		}
+	}		
 
 	//move middle element to parent and scoot all over
+	cout<< "n: "<<n<<endl;
 	int j = n;
 	while (j>i){
 		keys[j] = keys[j-1];
