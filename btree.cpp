@@ -26,7 +26,7 @@ BTreeNode::BTreeNode(bool leaf1){
 }
 
 
-bool BTree::checkInsertion(BTreeNode *root, int k){
+bool BTree::isPostionFull(BTreeNode *root, int k){
 	if (root->leaf){
 		int leafPostion = 0;
 		while (root->keys[leafPostion] < k and leafPostion < root->n){
@@ -41,7 +41,7 @@ bool BTree::checkInsertion(BTreeNode *root, int k){
 			downChildIndex++;
 		}
 
-		return checkInsertion(root->C[downChildIndex], k);
+		return isPostionFull(root->C[downChildIndex], k);
 	}
 }
 
@@ -78,13 +78,12 @@ void BTree::insert(int k){
 
 	}
 
-
-
 	//WRONG
 
 	//if the root is full
 
-	else if (root->n == NUM_ARR and !checkInsertion(root, k)){
+	else if (root->n == NUM_ARR and !isPostionFull(root, k)){
+
 		//create the new root called s
 		BTreeNode * s = new BTreeNode(false);
 		//let the first C pointer point of root
@@ -92,7 +91,9 @@ void BTree::insert(int k){
 		//split the root, now C[0] and C[1] are pointing to the two
 		s->splitNode(0, root);
 
+
 		//at this point n should be 1
+		cout << s->C[0];	
 
 		//this should go to one of the new children created
 		s->insertNonFull(k);
@@ -101,7 +102,7 @@ void BTree::insert(int k){
 	}
 
 	else{
-		// cout << checkInsertion(root, k) and root->n == NUM_ARR;
+		// cout << isPostionFull(root, k) and root->n == NUM_ARR;
 		root->insertNonFull(k);
 	}
 
