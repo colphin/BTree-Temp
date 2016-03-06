@@ -25,6 +25,8 @@ int main(){
 	t->insert(7);
 	t->insert(19);
 	t->insert(20);
+	t->insert(4);
+	t->insert(6);
 
 	// t->insert(12345);
 	// t->insert(4351);

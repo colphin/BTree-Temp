@@ -78,7 +78,7 @@ public:
 
     BTreeNode* getRoot(){ return root; };
 
-    bool isPostionFull(BTreeNode *root, int k);
+    bool PositionFull(BTreeNode *root, int k);
 };
 
 #endif

@@ -26,7 +26,7 @@ BTreeNode::BTreeNode(bool leaf1){
 }
 
 
-bool BTree::isPostionFull(BTreeNode *root, int k){
+bool BTree::PositionFull(BTreeNode *root, int k){
 	if (root->leaf){
 		int leafPostion = 0;
 		while (root->keys[leafPostion] < k and leafPostion < root->n){
@@ -41,7 +41,7 @@ bool BTree::isPostionFull(BTreeNode *root, int k){
 			downChildIndex++;
 		}
 
-		return isPostionFull(root->C[downChildIndex], k);
+		return PositionFull(root->C[downChildIndex], k);
 	}
 }
 
@@ -82,7 +82,7 @@ void BTree::insert(int k){
 
 	//if the root is full
 
-	else if (root->n == NUM_ARR and !isPostionFull(root, k)){
+	else if (root->n == NUM_ARR and !PositionFull(root, k)){
 
 		//create the new root called s
 		BTreeNode * s = new BTreeNode(false);
@@ -102,7 +102,7 @@ void BTree::insert(int k){
 	}
 
 	else{
-		// cout << isPostionFull(root, k) and root->n == NUM_ARR;
+		// cout << PositionFull(root, k) and root->n == NUM_ARR;
 		root->insertNonFull(k);
 	}
 
@@ -171,19 +171,22 @@ void BTreeNode::insertNonFull(int k){
 //has to increment the parent n value (the num of keys)
 void BTreeNode::splitNode(int i, BTreeNode *y){
 	//create the left and right nodes
-	BTreeNode leftChild(y->leaf);
-	BTreeNode rightChild(y->leaf);
+	if(y->leaf){
+		cout<<"They are leaves"<<endl;
+	}
+	BTreeNode* leftChild = new BTreeNode(y->leaf);
+	BTreeNode* rightChild = new BTreeNode(y->leaf);
 
 	//move the needed keys to Right and Left
 	for (int i = 0; i<(int)(NUM_ARR/2); i++){
-		leftChild.keys[i] = y->keys[i];
-		rightChild.keys[i] = y->keys[i+(int)NUM_ARR/2 + 1];
+		leftChild->keys[i] = y->keys[i];
+		rightChild->keys[i] = y->keys[i+(int)NUM_ARR/2 + 1];
 	}
 
 	//move the pointers to Right and Left
 	for (int i = 0; i<(int)((NUM_ARR+1)/2);i++){
-		leftChild.C[i] = y->C[i];
-		rightChild.C[i] = y->C[i+(NUM_ARR+1)/2 + 1];
+		leftChild->C[i] = y->C[i];
+		rightChild->C[i] = y->C[i+(NUM_ARR+1)/2 + 1];
 	}	
 
 	//move middle element to parent and scoot all over
@@ -196,11 +199,11 @@ void BTreeNode::splitNode(int i, BTreeNode *y){
 
 	//set the middle element in the correct place, set pointers i and i+1 to left and right
 	keys[i] = y->keys[(int)NUM_ARR/2];
-	C[i] = &leftChild;
-	C[i+1] = &rightChild;
+	C[i] = leftChild;
+	C[i+1] = rightChild;
 
 	//update counts
-	leftChild.n = rightChild.n = NUM_ARR/2;
+	leftChild->n = rightChild->n = NUM_ARR/2;
 	n = n+1;
 
 	//delete y
