@@ -83,7 +83,7 @@ void BTree::insert(int k){
 	//if the root is full
 
 	else if (root->n == NUM_ARR and !PositionFull(root, k)){
-
+        
 		//create the new root called s
 		BTreeNode * s = new BTreeNode(false);
 		//let the first C pointer point of root
@@ -91,10 +91,9 @@ void BTree::insert(int k){
 		//split the root, now C[0] and C[1] are pointing to the two
 		s->splitNode(0, root);
 
-
+        cout << "ROOT GROWTH new root key:" << s->keys[0] << endl;
+        
 		//at this point n should be 1
-		cout << s->C[0];	
-
 		//this should go to one of the new children created
 		s->insertNonFull(k);
 		//change the root to now equal s
@@ -102,11 +101,11 @@ void BTree::insert(int k){
 	}
 
 	else{
-		// cout << PositionFull(root, k) and root->n == NUM_ARR;
-		root->insertNonFull(k);
+        root->insertNonFull(k);
+        
+        
+        
 	}
-
-
 }
 
 //this always starts at root, and then it finds where it is suppose to be
@@ -127,10 +126,51 @@ void BTreeNode::insertNonFull(int k){
 		// goes to the correct pointer 
 		int downChildIndex = 0;
 		while (keys[downChildIndex] < k and downChildIndex < n){
+            cout << keys[downChildIndex]<<endl;
 			downChildIndex++;
+            
 		}
+        
+        
+        //Todo: This part is weird
+        while (C[downChildIndex] == NULL){
+            downChildIndex--;
+        }
 
 		cout << "DCI: " <<downChildIndex << endl;
+        
+        if (C[downChildIndex]->n == NUM_ARR){
+            int leafposition = 0;
+            while (C[downChildIndex]->keys[leafposition] and leafposition < NUM_ARR){
+                leafposition++;
+            }
+            
+            bool isLeafFull = true;
+            for( int i = 0; i < MAX_DATA ; i++){
+                if (C[downChildIndex]->dataVec[leafposition][i] == EMPTY_DATA){
+                    isLeafFull = false;
+                    break;
+                }
+            }
+            
+            if (isLeafFull == true){
+                splitNode(downChildIndex, C[downChildIndex]);
+                int leafposition = 0;
+                while (C[downChildIndex]->keys[leafposition] and leafposition < NUM_ARR){
+                    leafposition++;
+                }
+                
+                bool isLeafFull = true;
+                for( int i = 0; i < MAX_DATA ; i++){
+                    if (C[downChildIndex]->dataVec[leafposition][i] == EMPTY_DATA){
+                        isLeafFull = false;
+                        break;
+                    }
+                }
+            }
+            
+        }
+        
 
 		// At this point it calls insertNonFull at the new node
 		C[downChildIndex]->insertNonFull(k);
@@ -171,9 +211,7 @@ void BTreeNode::insertNonFull(int k){
 //has to increment the parent n value (the num of keys)
 void BTreeNode::splitNode(int i, BTreeNode *y){
 	//create the left and right nodes
-	if(y->leaf){
-		cout<<"They are leaves"<<endl;
-	}
+
 	BTreeNode* leftChild = new BTreeNode(y->leaf);
 	BTreeNode* rightChild = new BTreeNode(y->leaf);
 
@@ -210,11 +248,17 @@ void BTreeNode::splitNode(int i, BTreeNode *y){
 
 	//set the middle element in the correct place, set pointers i and i+1 to left and right
 	keys[i] = y->keys[(int)NUM_ARR/2];
+    
 	C[i] = leftChild;
 	C[i+1] = rightChild;
 
 	//update counts
-	leftChild->n = rightChild->n = NUM_ARR/2;
+    for (int j = 0; j < NUM_ARR; j++){
+        if (leftChild->keys[j] != EMPTY_KEY)
+            leftChild->n = leftChild->n+1;
+        if (rightChild->keys[j] != EMPTY_KEY)
+            rightChild->n = rightChild->n+1;
+    }
 	n = n+1;
 
 	//delete y
@@ -224,7 +268,7 @@ void BTreeNode::splitNode(int i, BTreeNode *y){
 
 void BTreeNode::splitLeaf(int i, int k){
 	dataVec[i].push_back(k);
-	int half_size = dataVec[i].size() / 2;
+	int half_size =		 dataVec[i].size() / 2;
 	sort(dataVec[i].begin(), dataVec[i].end(), myobject);
     vector<int> split_lo(dataVec[i].begin(), dataVec[i].begin() + half_size);
     vector<int> split_hi(dataVec[i].begin() + half_size, dataVec[i].end());
