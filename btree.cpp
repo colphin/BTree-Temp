@@ -132,10 +132,11 @@ void BTreeNode::insertNonFull(int k){
 		}
         
         
-        //Todo: This part is weird
-        while (C[downChildIndex] == NULL){
-            downChildIndex--;
-        }
+//        //Todo: This part is weird
+//        //at this point we somehow have a key with no values on the right side
+//        while (C[downChildIndex] == NULL){
+//            downChildIndex--;
+//        }
 
 		cout << "DCI: " <<downChildIndex << endl;
         
@@ -216,17 +217,22 @@ void BTreeNode::splitNode(int i, BTreeNode *y){
 	BTreeNode* rightChild = new BTreeNode(y->leaf);
 
 	//move the needed keys to Right and Left
-
-	for (int i = 0; i<(int)(NUM_ARR/2); i++){
-		leftChild->keys[i] = y->keys[i];
-		rightChild->keys[i] = y->keys[i+(int)NUM_ARR/2];
-	}
+    for (int i = 0; i < NUM_ARR/2; i++){
+        leftChild->C[i] = y->C[i];
+    }
+    
+    for (int i = 0; i < NUM_ARR/2-1; i++){
+        rightChild->C[i] = y->C[i+(NUM_ARR/2)+1];
+    }
 
 	//move the pointers to Right and Left
-	for (int i = 0; i<(int)((NUM_ARR+1)/2);i++){
+	for (int i = 0; i<(int)((NUM_ARR/2)+1);i++){
 		leftChild->C[i] = y->C[i];
-		rightChild->C[i] = y->C[i+(NUM_ARR+1)/2];
 	}
+    
+    for (int i = 0; i <(int)(NUM_ARR/2); i++){
+        rightChild->C[i] = y->C[i + (NUM_ARR/2)+1];
+    }
 
 	if(y->leaf){
 		for (int i = 0; i<(int)((NUM_ARR)/2)+1;i++){

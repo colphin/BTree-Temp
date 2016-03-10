@@ -8,7 +8,7 @@ int main(){
 	cout << "Hello" << endl;
 	BTree *t = new BTree();
 
-	for (int i = 0; i < 58; i++){
+	for (int i = 0; i < 100; i++){
 		t->insert(i);
         t->printTree(t->getRoot());
 	}
