@@ -37,7 +37,11 @@ public:
 
     // A utility function to split the child y of this node. i is index of y in
     // child array C[].  The Child y must be full when this function is called
-    void splitNode(int i, BTreeNode *y);
+    // the larger is on the left
+    void splitNode1(int i, BTreeNode *y);
+    
+    //the larger is on the right
+    void splitNode2(int i, BTreeNode *y);
 
     void splitLeaf(int i, int k);
 
