@@ -293,80 +293,6 @@ void BTreeNode::splitNode1(int i, BTreeNode *y){
 	free(y);
 }
 
-//i is the location of y in y's parent node, y HAS to be full
-//has to increment the parent n value (the num of keys)
-//With the larger one on the right
-void BTreeNode::splitNode2(int i, BTreeNode *y){
-    
-    cout << "SPLIT NODE 2 IS CALLED" << endl;
-
-    
-    //create the left and right nodes
-    
-    BTreeNode* leftChild = new BTreeNode(y->leaf);
-    BTreeNode* rightChild = new BTreeNode(y->leaf);
-    
-    
-    //move the needed keys to Right and Left
-    for (int i = 0; i < 1; i++){
-        leftChild->keys[i] = y->keys[i];
-    }
-    
-    for (int i = 0; i < 2; i++){
-        rightChild->keys[i] = y->keys[i+2];
-    }
-    
-    //move the pointers to Right and Left
-    if (y->leaf == false){
-        for (int i = 0; i<(int)((NUM_ARR/2)+1);i++){
-            leftChild->C[i] = y->C[i];
-        }
-        
-        for (int i = 0; i <(int)(NUM_ARR/2); i++){
-            rightChild->C[i] = y->C[i + (NUM_ARR/2)+1];
-        }
-    }
-    
-    if(y->leaf == true){
-        for (int i = 0; i<(int)((NUM_ARR)/2);i++){
-            leftChild->dataVec[i] = y->dataVec[i];
-        }
-        for (int i = 0; i<(int)((NUM_ARR)/2)+1;i++){
-            rightChild->dataVec[i] = y->dataVec[i+(int)NUM_ARR/2];
-        }
-    }
-    
-    //move middle element to parent and scoot all over
-    cout<< "n: "<<n<<endl;
-    int j = n;
-    while (j>=i){
-        keys[j] = keys[j-1];
-        C[j+1] = C[j];
-        j--;
-    }
-    
-    //set the middle element in the correct place, set pointers i and i+1 to left and right
-    keys[i] = y->keys[(int)NUM_ARR/2-1];
-    
-    C[i] = leftChild;
-    C[i+1] = rightChild;
-    
-    //update counts
-    for (int j = 0; j < NUM_ARR; j++){
-        if (leftChild->keys[j] != EMPTY_KEY)
-            leftChild->n = leftChild->n+1;
-        if (rightChild->keys[j] != EMPTY_KEY)
-            rightChild->n = rightChild->n+1;
-    }
-    
-    cout << "LEFT:" << leftChild->n << endl;
-    cout << "RIGHT:" << rightChild->n << endl;
-    
-    n = n+1;
-    
-    //delete y
-    free(y);
-}
 
 
 void BTreeNode::splitLeaf(int i, int k){
@@ -404,8 +330,8 @@ void BTree::printTree(BTreeNode *root){
 					cout << "\t" << root->dataVec[i][j] << endl;
 			}		
 		}
-//		cout<<"(KEY "<<i << "=" << root->keys[i] << ") " << endl;
-	}
+	// 	cout<<"(KEY "<<i << "=" << root->keys[i] << ") " << endl;
+	// }
 
 	if (root -> leaf){
 		for (int j = 0; j < MAX_DATA; j++){
