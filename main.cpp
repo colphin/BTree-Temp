@@ -8,10 +8,36 @@ int main(){
 	cout << "Hello" << endl;
 	BTree *t = new BTree();
 
-	for (int i = 0; i < 1000; i++){
-		t->insert(i);
-	}
+	// for (int i = 0; i < 1000; i++){
+	// 	t->insert(i);
+	// }
 
+
+	person f; 
+	f.name = "a";
+	f.index = 123;
+
+	person a;
+	a.name="Ryan";
+	a.index=5;
+
+	person b;
+	b.name = "Calvin";
+	b.index = 2;
+
+	person c; 
+	c.name = "John";
+	c.index = 1;
+
+	person d; 
+	d.name = "Sarah";
+	d.index = 12;
+
+	t->insert(a);
+	t->insert(b);
+	t->insert(c);
+	t->insert(d);
+	t->insert(f);
     
 //    for (int i = 1000; i >= 0; i--){
 //        t->insert(i);

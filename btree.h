@@ -6,18 +6,22 @@
 #include <algorithm>    // std::sort
 using namespace std;
 
-#define NUM_ARR 4
+#define STR_ARR 4
 #define MAX_DATA 3
 #define INITIAL_INSERT 3
-#define EMPTY_DATA -100
-#define EMPTY_KEY -200
+#define EMPTY_KEY ""
 
+struct person{
+        string name;
+        int index;
+        bool isPerson = true;
+};
 
 // A BTree node
 class BTreeNode
-{
-    int * keys; // An array of keys
-    vector<vector<int>> dataVec;
+{   
+    string * keys; // An array of keys
+    vector<vector<person>> dataVec;
     int t;      // Minimum degree (defines the range for number of keys)
     BTreeNode **C; // An array of child pointers
     int n;     // Current number of keys
@@ -25,7 +29,7 @@ class BTreeNode
 public:
     //This is for the sort method
     struct myclass {
-        bool operator() (int i,int j) { return (i<j);}
+        bool operator() (person i,person j) { return (i.name<j.name);}
     } myobject;
 
     BTreeNode(bool _leaf);   // Constructor
@@ -33,23 +37,20 @@ public:
     // A utility function to insert a new key in the subtree rooted with
     // this node. The assumption is, the node must be non-full when this
     // function is called
-    void insertNonFull(int k);
+    void insertNonFull(person k);
 
     // A utility function to split the child y of this node. i is index of y in
     // child array C[].  The Child y must be full when this function is called
     // the larger is on the left
     void splitNode1(int i, BTreeNode *y);
-    
-    //the larger is on the right
-    void splitNode2(int i, BTreeNode *y);
 
-    void splitLeaf(int i, int k);
+    void splitLeaf(int i, person k);
 
     // A function to traverse all nodes in a subtree rooted with this node
     void traverse();
 
     // A function to search a key in subtree rooted with this node.
-    BTreeNode *search(int k);   // returns NULL if k is not present.
+    BTreeNode *search(person k);   // returns NULL if k is not present.
 
 
 // Make BTree friend of this so that we can access private members of this
@@ -61,7 +62,7 @@ public:
 class BTree
 {
     BTreeNode *root; // Pointer to root node
-    vector<int> initialVec; //insert to this before root is created;
+    vector<person> initialVec; //insert to this before root is created;
 public:
     // Constructor (Initializes tree as empty)
     BTree()
@@ -71,18 +72,17 @@ public:
     void traverse();
 
     // function to search a key in this tree
-    BTreeNode* search(int k)
-    {  return (root == NULL)? NULL : root->search(k); }
+    // BTreeNode* search(int k)
+    // {  return (root == NULL)? NULL : root->search(k); }
 
     // The main function that inserts a new key in this B-Tree
-    void insert(int k);
+    void insert(person k);
 
-    //mainly to debug right now but hey fuck it right?
     void printTree(BTreeNode *root);
 
     BTreeNode* getRoot(){ return root; };
 
-    bool PositionFull(BTreeNode *root, int k);
+    bool PositionFull(BTreeNode *root,person k);
 };
 
 #endif

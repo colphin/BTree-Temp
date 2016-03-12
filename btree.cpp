@@ -4,21 +4,25 @@ BTreeNode::BTreeNode(bool leaf1){
 
 	leaf = leaf1;	//whether or not it is a leaf
 
+	person emptyPerson;
+	emptyPerson.isPerson=false;
+	emptyPerson.name = "";
+
 
 	// the amount of keys are 5, all initialized to -1
-	keys = new int[NUM_ARR]; 
-	for( int i = 0; i < NUM_ARR; i++){
+	keys = new string[STR_ARR]; 
+	for( int i = 0; i < STR_ARR; i++){
 		keys[i] = EMPTY_KEY;
 	}
 
-	C = new BTreeNode*[NUM_ARR+1]; //initialized to 6 with all NULL values
-	for (int i = 0; i < NUM_ARR+1; i++){
+	C = new BTreeNode*[STR_ARR+1]; //initialized to 6 with all NULL values
+	for (int i = 0; i < STR_ARR+1; i++){
 		C[i] = NULL;
 	}
 
-	dataVec.resize(NUM_ARR+1); //size of dataVec[i] initialized to zero
-	for( int i = 0; i < NUM_ARR+1 ; i++){
-		dataVec[i].resize(MAX_DATA , EMPTY_DATA);
+	dataVec.resize(STR_ARR+1); //size of dataVec[i] initialized to zero
+	for( int i = 0; i < STR_ARR+1 ; i++){
+		dataVec[i].resize(MAX_DATA , emptyPerson);
 	}
 
 	//The current of number of keys in the node is 0
@@ -26,18 +30,18 @@ BTreeNode::BTreeNode(bool leaf1){
 }
 
 
-bool BTree::PositionFull(BTreeNode *root, int k){
+bool BTree::PositionFull(BTreeNode *root, person k){
 	if (root->leaf){
 		int leafPostion = 0;
-		while (root->keys[leafPostion] < k and leafPostion < root->n){
+		while (root->keys[leafPostion] < k.name and leafPostion < root->n){
 			leafPostion++;
 		}
-		if (root->dataVec[leafPostion][0] == EMPTY_DATA) return true;
+		if (root->dataVec[leafPostion][0].isPerson==false) return true;
 		else return false;
 	}
 	else{
 		int downChildIndex = 0;
-		while (root->keys[downChildIndex] < k and downChildIndex < root->n){
+		while (root->keys[downChildIndex] < k.name and downChildIndex < root->n){
 			downChildIndex++;
 		}
 
@@ -51,7 +55,7 @@ bool BTree::PositionFull(BTreeNode *root, int k){
 // if the root isn't full then go down to where you want to insert and call insert non full
 // if the root is full then grow the tree and then insert it
 // finds where the element is suppose to go and then just 
-void BTree::insert(int k){
+void BTree::insert(person k){
 
 	// if the tree is empty;
 	if (root == NULL){
@@ -69,7 +73,7 @@ void BTree::insert(int k){
 			if(i == MAX_DATA){
 				root->splitLeaf(0,k);
 			}
-			else if (root->dataVec[0][i] == EMPTY_DATA){
+			else if (root->dataVec[0][i].isPerson==false){
 				root->dataVec[0][i] = k;
 				break;
 			}
@@ -82,14 +86,14 @@ void BTree::insert(int k){
 
 	//if the root is full
 
-	else if (root->n == NUM_ARR and !PositionFull(root, k)){
+	else if (root->n == STR_ARR and !PositionFull(root, k)){
         
 		//create the new root called s
 		BTreeNode * s = new BTreeNode(false);
 		//let the first C pointer point of root
 		s->C[0] = root;
 		//split the root, now C[0] and C[1] are pointing to the two
-//        if (s->C[0]->keys[NUM_ARR/2]>=k){
+//        if (s->C[0]->keys[STR_ARR/2]>=k){
 //            s->splitNode1(0, root);
 //        }else{
 //            s->splitNode2(0, root);
@@ -126,26 +130,26 @@ void BTree::insert(int k){
 //		x isn't a leaf node
 //	 		has to find where it belongs (will be done in insert non full)
 //			if the child to insert is full has to split it and figure out which one k belongs too
-void BTreeNode::insertNonFull(int k){
+void BTreeNode::insertNonFull(person k){
 	// if the current node you are on is not a leaf, then traverse down till you find the right place	
 	if (leaf == false){
 
 		// goes to the correct pointer 
 		int downChildIndex = 0;
-		while (keys[downChildIndex] < k and downChildIndex < n){
+		while (keys[downChildIndex] < k.name and downChildIndex < n){
 			downChildIndex++;
             
 		}
         
-        if (C[downChildIndex]->n == NUM_ARR){
+        if (C[downChildIndex]->n == STR_ARR){
             int leafposition = 0;
-            while (C[downChildIndex]->keys[leafposition] and leafposition < NUM_ARR){
+            while (C[downChildIndex]->keys[leafposition] < k.name and leafposition < STR_ARR){
                 leafposition++;
             }
             
             bool isLeafFull = true;
             for( int i = 0; i < MAX_DATA ; i++){
-                if (C[downChildIndex]->dataVec[leafposition][i] == EMPTY_DATA){
+                if (C[downChildIndex]->dataVec[leafposition][i].isPerson==false){
                     isLeafFull = false;
                     break;
                 }
@@ -153,7 +157,7 @@ void BTreeNode::insertNonFull(int k){
             
             if (isLeafFull == true){
                 
-//                if (C[downChildIndex]->keys[NUM_ARR/2]>=k){
+//                if (C[downChildIndex]->keys[STR_ARR/2]>=k){
 //                    splitNode1(downChildIndex, C[downChildIndex]);
 //                }else{
 //                    splitNode2(downChildIndex, C[downChildIndex]);
@@ -162,13 +166,13 @@ void BTreeNode::insertNonFull(int k){
                 splitNode1(downChildIndex, C[downChildIndex]);
                 downChildIndex++;
                 int leafposition = 0;
-                while (C[downChildIndex]->keys[leafposition] and leafposition < NUM_ARR){
+                while (C[downChildIndex]->keys[leafposition] < k.name and leafposition < STR_ARR){
                     leafposition++;
                 }
                 
                 bool isLeafFull = true;
                 for( int i = 0; i < MAX_DATA ; i++){
-                    if (C[downChildIndex]->dataVec[leafposition][i] == EMPTY_DATA){
+                    if (C[downChildIndex]->dataVec[leafposition][i].isPerson==false){
                         isLeafFull = false;
                         break;
                     }
@@ -190,14 +194,14 @@ void BTreeNode::insertNonFull(int k){
 	else{
         
 		// This finds where which the data vector should k go into
-		int leafPostion = 0;
-		while (keys[leafPostion] < k and leafPostion < n){
-			leafPostion++;
+		int leafPosition = 0;
+		while (keys[leafPosition] < k.name and leafPosition < n){
+			leafPosition++;
 		}
 
 		bool isLeafFull = true;
 		for( int i = 0; i < MAX_DATA ; i++){
-			if (dataVec[leafPostion][i] == EMPTY_DATA){
+			if (dataVec[leafPosition][i].isPerson==false){
 				isLeafFull = false;
 				break;
 			}
@@ -205,13 +209,23 @@ void BTreeNode::insertNonFull(int k){
 
 		// if the leaf is full then split it and insert it into correct leaf
 		if (isLeafFull == true){
-			splitLeaf(leafPostion,k);
+			splitLeaf(leafPosition,k);
 		}
 		// the leaf is not full and that means you get to just put it in
 		else{
-			dataVec[leafPostion].push_back(k);
-			sort(dataVec[leafPostion].begin(), dataVec[leafPostion].end(), myobject);
-			dataVec[leafPostion].erase(dataVec[leafPostion].begin());
+			dataVec[leafPosition].push_back(k);
+
+			//delete first empty person
+			for (int i = 0; i < MAX_DATA; i++){
+				if (dataVec[leafPosition][i].isPerson == false){
+					dataVec[leafPosition].erase(dataVec[leafPosition].begin() + i);
+					break;
+				}
+			}
+			sort(dataVec[leafPosition].begin(), dataVec[leafPosition].end(), myobject);
+			// dataVec[leafPostion].erase(dataVec[leafPostion].begin());
+
+
 		}
 
 	}
@@ -231,31 +245,31 @@ void BTreeNode::splitNode1(int i, BTreeNode *y){
 	BTreeNode* rightChild = new BTreeNode(y->leaf);
 
 	//move the needed keys to Right and Left
-    for (int i = 0; i < NUM_ARR/2; i++){
+    for (int i = 0; i < STR_ARR/2; i++){
         leftChild->keys[i] = y->keys[i];
     }
     
-    for (int i = 0; i < NUM_ARR/2-1; i++){
-        rightChild->keys[i] = y->keys[i+(NUM_ARR/2)+1];
+    for (int i = 0; i < STR_ARR/2-1; i++){
+        rightChild->keys[i] = y->keys[i+(STR_ARR/2)+1];
     }
 
 	//move the pointers to Right and Left
     if (y->leaf == false){
-        for (int i = 0; i<(int)((NUM_ARR/2)+1);i++){
+        for (int i = 0; i<(int)((STR_ARR/2)+1);i++){
             leftChild->C[i] = y->C[i];
         }
         
-        for (int i = 0; i <(int)(NUM_ARR/2); i++){
-            rightChild->C[i] = y->C[i + (NUM_ARR/2)+1];
+        for (int i = 0; i <(int)(STR_ARR/2); i++){
+            rightChild->C[i] = y->C[i + (STR_ARR/2)+1];
         }
     }
 
 	if(y->leaf == true){
-		for (int i = 0; i<(int)((NUM_ARR)/2)+1;i++){
+		for (int i = 0; i<(int)((STR_ARR)/2)+1;i++){
 			leftChild->dataVec[i] = y->dataVec[i];
 		}
-		for (int i = 0; i<(int)((NUM_ARR)/2);i++){
-			rightChild->dataVec[i] = y->dataVec[i+(int)NUM_ARR/2+1];
+		for (int i = 0; i<(int)((STR_ARR)/2);i++){
+			rightChild->dataVec[i] = y->dataVec[i+(int)STR_ARR/2+1];
 		}
 	}		
 
@@ -269,13 +283,13 @@ void BTreeNode::splitNode1(int i, BTreeNode *y){
 	}
 
 	//set the middle element in the correct place, set pointers i and i+1 to left and right
-	keys[i] = y->keys[(int)NUM_ARR/2];
+	keys[i] = y->keys[(int)STR_ARR/2];
     
 	C[i] = leftChild;
 	C[i+1] = rightChild;
 
 	//update counts
-    for (int j = 0; j < NUM_ARR; j++){
+    for (int j = 0; j < STR_ARR; j++){
         if (leftChild->keys[j] != EMPTY_KEY){
             leftChild->n = leftChild->n+1;
         }
@@ -295,25 +309,29 @@ void BTreeNode::splitNode1(int i, BTreeNode *y){
 
 
 
-void BTreeNode::splitLeaf(int i, int k){
+void BTreeNode::splitLeaf(int i, person k){
+	person emptyPerson;
+	emptyPerson.isPerson=false;
+	emptyPerson.name = "";
+
 	dataVec[i].push_back(k);
 	int half_size =	(int)dataVec[i].size() / 2;
 	sort(dataVec[i].begin(), dataVec[i].end(), myobject);
-    vector<int> split_lo(dataVec[i].begin(), dataVec[i].begin() + half_size);
-    vector<int> split_hi(dataVec[i].begin() + half_size, dataVec[i].end());
+    vector<person> split_lo(dataVec[i].begin(), dataVec[i].begin() + half_size);
+    vector<person> split_hi(dataVec[i].begin() + half_size, dataVec[i].end());
     dataVec[i]=split_lo;
-	dataVec[i].insert(dataVec[i].begin(),EMPTY_DATA);
+	dataVec[i].insert(dataVec[i].begin(),emptyPerson);
     //loop for vectors leave space open on i+1 index
     for(int x = 3; x > i ; x--){
         dataVec[x+1]= dataVec[x];
     }
     dataVec[i+1]=split_hi;
-    dataVec[i+1].insert(dataVec[i+1].begin(),EMPTY_DATA);
+    dataVec[i+1].insert(dataVec[i+1].begin(),emptyPerson);
     //loop through keys
     for(int x = 2; x >= i ; x--){
         keys[x+1]=keys[x];
     }
-    keys[i] = split_hi[0];
+    keys[i] = split_hi[0].name;
     n++;  // Update number of keys in root
 }
 
@@ -326,17 +344,18 @@ void BTree::printTree(BTreeNode *root){
 	for (int i = 0 ; i < root->n; i++){
 		if (root->leaf){
 			for (int j = 0; j < MAX_DATA; j++){
-				if (root->dataVec[i][j] != EMPTY_DATA)
-					cout << "\t" << root->dataVec[i][j] << endl;
+				if (root->dataVec[i][j].isPerson==true)
+					cout << "\t" << root->dataVec[i][j].name<<", "<<root->dataVec[i][j].index << endl;
 			}		
 		}
-	// 	cout<<"(KEY "<<i << "=" << root->keys[i] << ") " << endl;
+		cout<<"(KEY "<<i << "=" << root->keys[i] << ") " << endl;
+	}
 	// }
 
 	if (root -> leaf){
 		for (int j = 0; j < MAX_DATA; j++){
-			if (root->dataVec[root->n][j] != EMPTY_DATA)
-				cout << "\t" << root->dataVec[root->n][j] << endl;
+			if (root->dataVec[root->n][j].isPerson==true)
+				cout << "\t" << root->dataVec[root->n][j].name<<", "<<root->dataVec[root->n][j].index << endl;
 		}
 	}
 
