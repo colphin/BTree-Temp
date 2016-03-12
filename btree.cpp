@@ -89,11 +89,14 @@ void BTree::insert(int k){
 		//let the first C pointer point of root
 		s->C[0] = root;
 		//split the root, now C[0] and C[1] are pointing to the two
-        if (s->C[0]->keys[NUM_ARR/2]>=k){
-            s->splitNode1(0, root);
-        }else{
-            s->splitNode2(0, root);
-        }
+//        if (s->C[0]->keys[NUM_ARR/2]>=k){
+//            s->splitNode1(0, root);
+//        }else{
+//            s->splitNode2(0, root);
+//        }
+        
+        s->splitNode1(0, root);
+
 
         cout << "ROOT GROWTH new root key:" << s->keys[0] << endl;
         
@@ -150,11 +153,14 @@ void BTreeNode::insertNonFull(int k){
             
             if (isLeafFull == true){
                 
-                if (C[downChildIndex]->keys[NUM_ARR/2]>=k){
-                    splitNode1(downChildIndex, C[downChildIndex]);
-                }else{
-                    splitNode2(downChildIndex, C[downChildIndex]);
-                }
+//                if (C[downChildIndex]->keys[NUM_ARR/2]>=k){
+//                    splitNode1(downChildIndex, C[downChildIndex]);
+//                }else{
+//                    splitNode2(downChildIndex, C[downChildIndex]);
+//                }
+                
+                splitNode1(downChildIndex, C[downChildIndex]);
+                downChildIndex++;
                 int leafposition = 0;
                 while (C[downChildIndex]->keys[leafposition] and leafposition < NUM_ARR){
                     leafposition++;
@@ -167,16 +173,22 @@ void BTreeNode::insertNonFull(int k){
                         break;
                     }
                 }
+                
             }
             
         }
         
 
 		// At this point it calls insertNonFull at the new node
+        if (C[downChildIndex]->n == 4){
+            splitNode1(downChildIndex, C[downChildIndex]);
+            downChildIndex++;
+        }
 		C[downChildIndex]->insertNonFull(k);
 	}
 	// The current node is a leaf
 	else{
+        
 		// This finds where which the data vector should k go into
 		int leafPostion = 0;
 		while (keys[leafPostion] < k and leafPostion < n){
@@ -194,7 +206,6 @@ void BTreeNode::insertNonFull(int k){
 		// if the leaf is full then split it and insert it into correct leaf
 		if (isLeafFull == true){
 			splitLeaf(leafPostion,k);
-			//TODO: decide which leaf is the correct one and add into there
 		}
 		// the leaf is not full and that means you get to just put it in
 		else{
@@ -211,6 +222,9 @@ void BTreeNode::insertNonFull(int k){
 //has to increment the parent n value (the num of keys)
 //with the larger one on the left
 void BTreeNode::splitNode1(int i, BTreeNode *y){
+    
+    cout << "SPLIT NODE 1 IS CALLED" << endl;
+    
 	//create the left and right nodes
 
 	BTreeNode* leftChild = new BTreeNode(y->leaf);
@@ -218,11 +232,11 @@ void BTreeNode::splitNode1(int i, BTreeNode *y){
 
 	//move the needed keys to Right and Left
     for (int i = 0; i < NUM_ARR/2; i++){
-        leftChild->C[i] = y->C[i];
+        leftChild->keys[i] = y->keys[i];
     }
     
     for (int i = 0; i < NUM_ARR/2-1; i++){
-        rightChild->C[i] = y->C[i+(NUM_ARR/2)+1];
+        rightChild->keys[i] = y->keys[i+(NUM_ARR/2)+1];
     }
 
 	//move the pointers to Right and Left
@@ -236,7 +250,7 @@ void BTreeNode::splitNode1(int i, BTreeNode *y){
         }
     }
 
-	if(y->leaf){
+	if(y->leaf == true){
 		for (int i = 0; i<(int)((NUM_ARR)/2)+1;i++){
 			leftChild->dataVec[i] = y->dataVec[i];
 		}
@@ -262,11 +276,17 @@ void BTreeNode::splitNode1(int i, BTreeNode *y){
 
 	//update counts
     for (int j = 0; j < NUM_ARR; j++){
-        if (leftChild->keys[j] != EMPTY_KEY)
+        if (leftChild->keys[j] != EMPTY_KEY){
             leftChild->n = leftChild->n+1;
+        }
         if (rightChild->keys[j] != EMPTY_KEY)
             rightChild->n = rightChild->n+1;
     }
+    
+    
+    cout << "LEFT:" << leftChild->n << endl;
+    cout << "RIGHT:" << rightChild->n << endl;
+    
 	n = n+1;
 
 	//delete y
@@ -277,6 +297,10 @@ void BTreeNode::splitNode1(int i, BTreeNode *y){
 //has to increment the parent n value (the num of keys)
 //With the larger one on the right
 void BTreeNode::splitNode2(int i, BTreeNode *y){
+    
+    cout << "SPLIT NODE 2 IS CALLED" << endl;
+
+    
     //create the left and right nodes
     
     BTreeNode* leftChild = new BTreeNode(y->leaf);
@@ -284,12 +308,12 @@ void BTreeNode::splitNode2(int i, BTreeNode *y){
     
     
     //move the needed keys to Right and Left
-    for (int i = 0; i < NUM_ARR/2-1; i++){
-        leftChild->C[i] = y->C[i];
+    for (int i = 0; i < 1; i++){
+        leftChild->keys[i] = y->keys[i];
     }
     
-    for (int i = 0; i < NUM_ARR/2; i++){
-        rightChild->C[i] = y->C[i+(NUM_ARR/2)+1];
+    for (int i = 0; i < 2; i++){
+        rightChild->keys[i] = y->keys[i+2];
     }
     
     //move the pointers to Right and Left
@@ -303,7 +327,7 @@ void BTreeNode::splitNode2(int i, BTreeNode *y){
         }
     }
     
-    if(y->leaf){
+    if(y->leaf == true){
         for (int i = 0; i<(int)((NUM_ARR)/2);i++){
             leftChild->dataVec[i] = y->dataVec[i];
         }
@@ -334,6 +358,10 @@ void BTreeNode::splitNode2(int i, BTreeNode *y){
         if (rightChild->keys[j] != EMPTY_KEY)
             rightChild->n = rightChild->n+1;
     }
+    
+    cout << "LEFT:" << leftChild->n << endl;
+    cout << "RIGHT:" << rightChild->n << endl;
+    
     n = n+1;
     
     //delete y
@@ -343,7 +371,7 @@ void BTreeNode::splitNode2(int i, BTreeNode *y){
 
 void BTreeNode::splitLeaf(int i, int k){
 	dataVec[i].push_back(k);
-	int half_size =		 dataVec[i].size() / 2;
+	int half_size =	(int)dataVec[i].size() / 2;
 	sort(dataVec[i].begin(), dataVec[i].end(), myobject);
     vector<int> split_lo(dataVec[i].begin(), dataVec[i].begin() + half_size);
     vector<int> split_hi(dataVec[i].begin() + half_size, dataVec[i].end());
@@ -376,7 +404,7 @@ void BTree::printTree(BTreeNode *root){
 					cout << "\t" << root->dataVec[i][j] << endl;
 			}		
 		}
-		cout<<"(KEY "<<i << "=" << root->keys[i] << ") " << endl;
+//		cout<<"(KEY "<<i << "=" << root->keys[i] << ") " << endl;
 	}
 
 	if (root -> leaf){

@@ -8,11 +8,17 @@ int main(){
 	cout << "Hello" << endl;
 	BTree *t = new BTree();
 
-	for (int i = 0; i < 90; i++){
+	for (int i = 0; i < 1000; i++){
 		t->insert(i);
-        t->printTree(t->getRoot());
 	}
+
     
+//    for (int i = 1000; i >= 0; i--){
+//        t->insert(i);
+//    }
+    
+    t->printTree(t->getRoot());
+    cout << "---------------------" << endl;
 
 
 	// t->insert(12);
